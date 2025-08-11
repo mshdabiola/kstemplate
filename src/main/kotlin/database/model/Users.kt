@@ -1,6 +1,6 @@
 package com.mshdabiola.database.model
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object Users : Table() {
     val id = integer("id").autoIncrement()

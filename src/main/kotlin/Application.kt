@@ -4,22 +4,17 @@ import com.mshdabiola.database.service.UserService
 import com.mshdabiola.route.configureMonitoring
 import com.mshdabiola.route.configureRouting
 import com.mshdabiola.route.userRoute
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.application.log
 import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import org.jetbrains.exposed.sql.Database
-import org.koin.core.logger.Logger
+import org.jetbrains.exposed.v1.jdbc.Database
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
-import java.sql.Connection
-import java.sql.DriverManager
-import kotlin.math.log
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 
 
 fun main(args: Array<String>) {
@@ -62,7 +57,7 @@ fun Application.module() {
                     transactionIsolation = "TRANSACTION_REPEATABLE_READ" // Adjust if needed
                     validate()
                 }
-                val dataSource = HikariDataSource(configPostgres)
+                val dataSource = HikariDataSource(configTemp)
                 Database.connect(dataSource)
             }
             single<UserService> {
