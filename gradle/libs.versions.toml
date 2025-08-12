@@ -10,6 +10,8 @@ prometheus-version = "1.6.13"
 spotless = "7.2.1"
 detekt = "1.23.8"
 kover = "0.9.1"
+versionName = "1.2.14"
+group = "com.mshdabiola"
 
 
 [libraries]

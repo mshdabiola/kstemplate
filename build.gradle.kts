@@ -29,8 +29,8 @@ plugins {
 
 }
 
-group = "com.mshdabiola"
-version = "0.0.1"
+group = libs.versions.group.get()
+version = libs.versions.versionName.get()
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
