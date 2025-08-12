@@ -13,4 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rootProject.name = "kstemplate"
+package com.mshdabiola.kstemplate.model
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ExposedUser(
+    val name: String,
+    val age: Int,
+)

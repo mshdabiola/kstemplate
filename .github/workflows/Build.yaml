@@ -1,0 +1,102 @@
+name: Build all and test
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "Local tests"
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      checks: write
+      contents: write
+      pull-requests: write
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version-file: .github/workflows/.java-version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Apply Spotless
+        run: ./gradlew spotlessApply
+
+      - name: Run detekt
+        run: ./gradlew detekt
+
+      - name: Upload merge detekt
+        uses: github/codeql-action/upload-sarif@v3.29.2
+        if: success() || failure()
+        with:
+          sarif_file: build/reports/detekt/detekt.sarif
+          category: detekt
+
+      - name: Generate coverage reports for Jvm
+        run: ./gradlew koverHtmlReportJvm koverXmlReportJvm
+
+      - name: Upload JVM local results (HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-test-results
+          path: '**/build/reports/tests/test'
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2.20.0
+        with:
+            check_name: Test results
+            comment_title: Test results
+            large_files: true
+            ignore_runs: false
+            files: ./**/build/test-results/**/*.xml
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./**/build/test-results/**/*.xml
+
+      - name: Upload local coverage reports (XML + HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          if-no-files-found: error
+          compression-level: 1
+          overwrite: false
+          path: '**/build/reports/kover/'
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5.4.3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: "build/reports/kover/reportJvm.xml"
+          verbose: true
+
+
+      - name: Push new Spotless Apply if available
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: '**/*.kt **/*.kts **/*.xml'
+          disable_globbing: true
+          commit_message: "🤖 Apply Spotless formatting"
