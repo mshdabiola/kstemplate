@@ -57,7 +57,7 @@ fun Application.module() {
                     transactionIsolation = "TRANSACTION_REPEATABLE_READ" // Adjust if needed
                     validate()
                 }
-                val dataSource = HikariDataSource(configTemp)
+                val dataSource = HikariDataSource(configPostgres)
                 Database.connect(dataSource)
             }
             single<UserService> {
