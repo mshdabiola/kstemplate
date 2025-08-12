@@ -40,8 +40,10 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
 
       - name: Apply Spotless
-        run: |
-          ./gradlew spotlessApply
+        run: ./gradlew spotlessApply
+
+      - name: Run detekt
+        run: ./gradlew detekt
 
       - name: Upload merge detekt
         uses: github/codeql-action/upload-sarif@v3.29.2
