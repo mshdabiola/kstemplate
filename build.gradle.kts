@@ -1,7 +1,32 @@
+/*
+ * Designed and developed by 2024 mshdabiola (lawal abiola)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.powerAssert)
+    alias(libs.plugins.spotless)
+
+
 }
 
 group = "com.mshdabiola"
@@ -12,6 +37,51 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+powerAssert {
+    functions.set(
+        listOf(
+            "kotlin.assert",
+            "kotlin.test.assertTrue",
+            "kotlin.test.assertEquals",
+            "kotlin.test.assertNull",
+        ),
+    )
+}
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**/*.kt")
+        targetExclude("spotless/copyright.kt", "**/generated/**")
+        ktlint()
+
+        licenseHeaderFile(rootProject.file("$rootDir/spotless/copyright.kt"))
+            .updateYearWithLatest(true)
+    }
+    format("kts") {
+        target("**/*.kts")
+        targetExclude("**/build/**/*.kts")
+        targetExclude("spotless/copyright.kt", "**/generated/**")
+        // Look for the first line that doesn't have a block comment (assumed to be the license)
+        licenseHeaderFile(rootProject.file("spotless/copyright.kts"), "")
+            .updateYearWithLatest(true)
+    }
+    format("xml") {
+        target("**/*.xml")
+        targetExclude("**/build/**/*.xml")
+        targetExclude("spotless/copyright.kt", "**/generated/**")
+        // Look for the first XML tag that isn't a comment (<!--) or the xml declaration (<?xml)
+        licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "")
+            .updateYearWithLatest(true)
+    }
+}
+
+detekt {
+    config.setFrom(files("$rootDir/detekt.yml"))
+    buildUponDefaultConfig = true
+    parallel = true
+    ignoreFailures = true
+    basePath = rootProject.projectDir.absolutePath
 }
 
 repositories {
@@ -44,5 +114,6 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.5")
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
     implementation("com.zaxxer:HikariCP:6.2.1")
+//    kover(this)
 
 }
