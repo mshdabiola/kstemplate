@@ -1,51 +1,78 @@
-# school-server
+# kstemplate
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
-
-Here are some useful links to get you started:
-
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+`kstemplate` is a Kotlin server application built with [Ktor](https://ktor.io/), designed as a template for quickly starting new backend projects. It features modular architecture, dependency injection, database integration, metrics, and more.
 
 ## Features
 
-Here's a list of features included in this project:
+- **Ktor**: Fast, asynchronous Kotlin web framework.
+- **Koin**: Dependency injection for modular, testable code.
+- **Exposed**: ORM for database access (supports PostgreSQL, SQLite, H2).
+- **kotlinx.serialization**: JSON serialization/deserialization.
+- **Content Negotiation**: Automatic content conversion based on headers.
+- **Micrometer Metrics**: Prometheus-compatible metrics endpoint.
+- **Resources Routing**: Type-safe routing.
+- **AutoHeadResponse**: Automatic HEAD responses.
+- **Sessions**: Persistent sessions via cookies or headers.
+- **Authentication**: Basic, JWT, and Firebase authentication support.
+- **Docker**: Ready-to-use Dockerfile for containerized deployment.
+- **Spotless & Detekt**: Code formatting and static analysis.
 
-| Name                                                                      | Description                                                                        |
-| ---------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| [Koin](https://start.ktor.io/p/koin)                                      | Provides dependency injection                                                      |
-| [Routing](https://start.ktor.io/p/routing)                                | Provides a structured routing DSL                                                  |
-| [kotlinx.serialization](https://start.ktor.io/p/kotlinx-serialization)    | Handles JSON serialization using kotlinx.serialization library                     |
-| [Content Negotiation](https://start.ktor.io/p/content-negotiation)        | Provides automatic content conversion according to Content-Type and Accept headers |
-| [Exposed](https://start.ktor.io/p/exposed)                                | Adds Exposed database to your application                                          |
-| [Micrometer Metrics](https://start.ktor.io/p/metrics-micrometer)          | Enables Micrometer metrics in your Ktor server application.                        |
-| [Resources](https://start.ktor.io/p/resources)                            | Provides type-safe routing                                                         |
-| [AutoHeadResponse](https://start.ktor.io/p/auto-head-response)            | Provides automatic responses for HEAD requests                                     |
-| [Sessions](https://start.ktor.io/p/ktor-sessions)                         | Adds support for persistent sessions through cookies or headers                    |
-| [Authentication](https://start.ktor.io/p/auth)                            | Provides extension point for handling the Authorization header                     |
-| [Firebase authentication](https://start.ktor.io/p/firebase-auth-provider) | Handles Firebase bearer authentication                                             |
-| [Authentication Basic](https://start.ktor.io/p/auth-basic)                | Handles 'Basic' username / password authentication scheme                          |
-| [Authentication JWT](https://start.ktor.io/p/auth-jwt)                    | Handles JSON Web Token (JWT) bearer authentication scheme                          |
+## Getting Started
 
-## Building & Running
+### Prerequisites
 
-To build or run the project, use one of the following tasks:
+- JDK 17+ (or use the provided Dockerfile)
+- Gradle (or use `./gradlew` wrapper)
+- PostgreSQL (or SQLite/H2 for development)
 
-| Task                          | Description                                                          |
-| -------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`              | Run the tests                                                        |
-| `./gradlew build`             | Build everything                                                     |
-| `buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `run`                         | Run the server                                                       |
-| `runDocker`                   | Run using the local docker image                                     |
+### Build & Run
 
-If the server starts successfully, you'll see the following output:
+```sh
+# Run tests
+./gradlew test
 
+# Build the project
+./gradlew build
+
+# Run the server
+./gradlew run
 ```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+
+The server will start on [http://0.0.0.0:8080](http://0.0.0.0:8080) by default.
+
+### Docker
+
+To build and run with Docker:
+
+```sh
+# Build Docker image
+docker build -t kstemplate .
+
+# Run container
+docker run -p 8080:8080 kstemplate
 ```
+
+## API Endpoints
+
+- `GET /` — Health check, returns "Hello World!"
+- `POST /users` — Create a user (JSON body: `{ "name": "...", "age": ... }`)
+- `GET /users/{id}` — Get user by ID
+- `PUT /users/{id}` — Update user by ID
+- `DELETE /users/{id}` — Delete user by ID
+- `GET /metrics-micrometer` — Prometheus metrics
+
+## Configuration
+
+Edit `src/main/resources/application.yaml` to set environment variables, database URLs, JWT settings, etc.
+
+## Development
+
+- Code style enforced by Spotless (`./gradlew spotlessApply`)
+- Static analysis with Detekt (`./gradlew detekt`)
+- Test coverage with Kover (`./gradlew koverHtmlReportJvm`)
+
+## License
+
+Designed and developed by mshdabiola (lawal abiola), licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
 
