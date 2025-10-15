@@ -18,7 +18,7 @@ package com.mshdabiola.kstemplate.database.service
 import com.mshdabiola.kstemplate.database.model.Users
 import com.mshdabiola.kstemplate.model.ExposedUser
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
